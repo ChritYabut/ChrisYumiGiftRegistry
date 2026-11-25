@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chris & Yumi — Wedding Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#faf6f0; --card:#ffffff; --ink:#2b2622; --muted:#7a6f66; --line:#e8dfd3;
+    --accent:#8a6a4f; --accent-soft:#f1e7da;
+    --t5:#6f8a74; --t10:#8a6a4f; --t20:#6a6f8f; --t30:#9a5b5b;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 Inter,system-ui,sans-serif}
+  header{text-align:center;padding:64px 20px 28px}
+  .eyebrow{letter-spacing:.22em;text-transform:uppercase;font-size:12px;color:var(--muted)}
+  h1{font-family:"Cormorant Garamond",serif;font-weight:600;font-size:clamp(40px,7vw,64px);margin:10px 0 6px;line-height:1.05}
+  h1 em{font-style:italic;color:var(--accent);font-weight:500}
+  .date{font-family:"Cormorant Garamond",serif;font-size:22px;color:var(--muted)}
+  .intro{max-width:620px;margin:22px auto 0;color:var(--muted)}
+  .delivery{max-width:620px;margin:22px auto 0;background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:14px 18px;font-size:14px}
+  .delivery b{color:var(--ink)}
+  nav{position:sticky;top:0;z-index:5;background:rgba(250,246,240,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line);padding:12px 16px}
+  .filters{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:center}
+  .group{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:6px 13px;font:500 13px Inter,sans-serif;cursor:pointer}
+  .chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+  main{max-width:1100px;margin:0 auto;padding:26px 16px 60px}
+  section.cat{margin-top:34px}
+  section.cat h2{font-family:"Cormorant Garamond",serif;font-size:32px;font-weight:600;margin:0 0 4px}
+  section.cat p.note{margin:0 0 14px;color:var(--muted);font-size:14px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:8px}
+  .tier{align-self:flex-start;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:999px;color:#fff}
+  .tier.t5{background:var(--t5)} .tier.t10{background:var(--t10)} .tier.t20{background:var(--t20)} .tier.t30{background:var(--t30)}
+  .card h3{margin:0;font-size:16px;font-weight:600;line-height:1.3}
+  .price{font-family:"Cormorant Garamond",serif;font-size:26px;font-weight:600;line-height:1}
+  .store{font-size:13px;color:var(--muted)}
+  .why{font-size:13.5px;color:#4a423c;flex:1}
+  .card a.btn{align-self:flex-start;text-decoration:none;font-weight:600;font-size:13px;color:var(--accent);border-bottom:1px solid currentColor;padding-bottom:1px}
+  .empty{color:var(--muted);text-align:center;padding:40px}
+  footer{max-width:760px;margin:0 auto;padding:10px 20px 60px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">Wedding Registry</div>
+  <h1>Chris <em>&amp;</em> Yumi</h1>
+  <div class="date">December 26, 2026 · Davao City</div>
+  <p class="intro">Your presence is the best gift. If you'd like to help us set up our first home, these are the things we need. We grouped them by budget, and the bigger items are easy to give as a group.</p>
+  <div class="delivery" id="delivery"></div>
+</header>
+
+<nav>
+  <div class="filters">
+    <div class="group" id="tierFilters" aria-label="Budget"></div>
+    <div class="group" id="catFilters" aria-label="Category"></div>
+  </div>
+</nav>
+
+<main id="list"></main>
+
+<footer>
+  Prices were checked in November 2026 from each store's site and may change with sales.
+  Please let Chris or Yumi know what you're giving so two people don't buy the same thing.
+</footer>
+
+<script>
+/* ---------- Edit these ---------- */
+const DELIVERY_NOTE = "<b>Delivery:</b> please have gifts delivered to our home in Manila. Message Chris or Yumi for the full address and the best delivery days.";
+
+const TIERS = {
+  t5:  "Under ₱5k",
+  t10: "~₱10k",
+  t20: "~₱20k",
+  t30: "₱30k & up"
+};
+
+const CATEGORIES = {
+  bed:     {name:"Bed",          note:"Queen size (60 × 75 in). The frame and the mattress are listed separately, so they can be two gifts."},
+  tv:      {name:"TV",           note:"55 inches fits most living rooms. Bigger screens are listed in the top tier."},
+  sofa:    {name:"Sofa",         note:"A 2–3 seater or a small sectional for the living room."},
+  dining:  {name:"Dining Table", note:"A 4-seater works for everyday use. A 6-seater leaves room for family."},
+  kitchen: {name:"Kitchenware",  note:"Cookware and appliances for our first kitchen."}
+};
+
+const ITEMS = [
+  // ---- Bed ----
+  {cat:"bed", tier:"t5",  name:"Mandaue Foam Kumi Metal Bed Frame (Queen)", price:3955, store:"Mandaue Foam",
+   why:"Simple black or white metal frame with a slatted base, so no box spring is needed.", url:"https://mandauefoam.ph/collections/queen-beds"},
+  {cat:"bed", tier:"t10", name:"Uratex Perfect Serenity Mirage Mattress (Queen, 8\")", price:10500, store:"Uratex",
+   why:"Medium-firm foam with an antibacterial and anti-dust-mite treatment. Comes with a 5-year warranty.", url:"https://uratex.com.ph/products/perfect-serenity-mirage"},
+  {cat:"bed", tier:"t10", name:"Mandaue Foam Wilton Upholstered Bed (Queen)", price:13615, store:"Mandaue Foam",
+   why:"Upholstered headboard in beige or light taupe. Looks warmer than a metal frame.", url:"https://mandauefoam.ph/collections/queen-beds"},
+  {cat:"bed", tier:"t20", name:"Uratex Senso Memory Original Mattress", price:17500, store:"Uratex",
+   why:"Plush memory foam that relieves pressure points. Comes with a 10-year warranty.", url:"https://uratex.com.ph/products/sensory-memory-original"},
+  {cat:"bed", tier:"t20", name:"IKEA HEMNES Bed Frame + Mattress (150 × 200 cm)", price:24998, store:"IKEA PH",
+   why:"Solid-wood frame bundled with a firm memory-foam mattress. One gift covers the whole bed.", url:"https://www.ikea.com/ph/en/p/hemnes-bed-frame-with-mattress-s19541965"},
+  {cat:"bed", tier:"t30", name:"Our Home Gatwick Bed Frame (Queen)", price:29950, store:"Our Home (SM)",
+   why:"Statement frame from SM's furniture line. The mattress is sold separately.", url:"https://ourhome.ph/pages/queen-size-bed-frame-dimensions-guide"},
+  {cat:"bed", tier:"t30", name:"Uratex Premium Touch Sublime Mattress (Queen, 11\")", price:35785, store:"Our Home (SM)",
+   why:"Pocket springs with a memory-foam layer and a cooling Tencel cover. Feels like a hotel bed.", url:"https://ourhome.ph/collections/uratex/products/uratex-premium-touch-sublime-mattress"},
+
+  // ---- TV ----
+  {cat:"tv", tier:"t10", name:"Xiaomi TV A 2026 — 43\"", price:11699, store:"Xiaomi PH / Shopee",
+   why:"Budget Google TV for a bedroom. Full HD only.", url:"https://www.yugatech.com/television/xiaomi-tv-a-series-2026-price-philippines/"},
+  {cat:"tv", tier:"t20", name:"Xiaomi TV A 2026 — 55\" 4K", price:19699, store:"Xiaomi PH / Shopee",
+   why:"The cheapest good 55\" 4K Google TV right now. It also has a 120Hz game mode.", url:"https://www.yugatech.com/television/xiaomi-tv-a-series-2026-price-philippines/"},
+  {cat:"tv", tier:"t20", name:"TCL 55P7K 55\" QLED Google TV", price:24995, store:"Ansons",
+   why:"QLED panel with Dolby Vision and Atmos. Better colour than the entry-level models.", url:"https://ansons.ph/product/tcl-57p7k-55in-4k-qled-google-tv"},
+  {cat:"tv", tier:"t30", name:"TCL 55C6K 55\" QD-Mini LED Google TV", price:31995, store:"Netcodex / TCL dealers",
+   why:"Mini-LED gives it much higher brightness and contrast. It also has 144Hz and Onkyo speakers. The best value in this tier.", url:"https://netcodex.ph/product/tcl-c6k-55-inch-qd-mini-led-4k-hdr-smart-tv-hva-panel-144hz-dolby-atmos-with-google-tv-and-onkyo-2-1-hi-fi-audio-55c6k/"},
+  {cat:"tv", tier:"t30", name:"Xiaomi TV S Mini LED 2026 — 65\"", price:51990, store:"Xiaomi PH / Shopee / Lazada",
+   why:"A big 65\" Mini-LED screen for movie nights. A good group gift.", url:"https://www.noypigeeks.com/?p=280343"},
+  {cat:"tv", tier:"t30", name:"LG OLED evo C6 55\" (2026)", price:82490, store:"Ansons",
+   why:"The premium pick, with perfect blacks and a 2-year warranty. Best as a group gift.", url:"https://ansons.ph/product/2026-model-55in-lg-oled-evo-ai-4k-smart-tv-oled55c6psa/"},
+
+  // ---- Sofa ----
+  {cat:"sofa", tier:"t10", name:"Our Home Seiv 2-Seater Sofa", price:10485, store:"Our Home (SM)",
+   why:"Clean modern loveseat, on sale from ₱34,950.", url:"https://ourhome.ph/collections/sofas"},
+  {cat:"sofa", tier:"t10", name:"Our Home Seiv 3-Seater Sofa", price:11985, store:"Our Home (SM)",
+   why:"Same line in a 3-seater. Seats one more for very little extra.", url:"https://ourhome.ph/collections/sofas"},
+  {cat:"sofa", tier:"t20", name:"Our Home Colsten Sofabed", price:17999, store:"Our Home (SM)",
+   why:"Converts into a bed, which helps when family visits from Davao or Toronto.", url:"https://ourhome.ph/collections/sofas"},
+  {cat:"sofa", tier:"t20", name:"Our Home Carrucci 2-Seater Sofa", price:19960, store:"Our Home (SM)",
+   why:"More tailored look in black.", url:"https://ourhome.ph/collections/sofas"},
+  {cat:"sofa", tier:"t20", name:"Our Home Seiv Sectional Sofa", price:26565, store:"Our Home (SM)",
+   why:"L-shaped sectional. Room to lie down and watch TV.", url:"https://ourhome.ph/collections/sofas"},
+  {cat:"sofa", tier:"t30", name:"Mandaue Foam Wisteria Sofa Set", price:33650, store:"Mandaue Foam",
+   why:"Full wooden-frame living room set made from FSC-certified wood, with a 30-day return guarantee.", url:"https://mandauefoam.ph/collections/wooden-sofa-sets"},
+
+  // ---- Dining ----
+  {cat:"dining", tier:"t10", name:"Mandaue Foam Elsie 4-Seater Round Dining Set", price:9737, store:"Lazada (Mandaue Foam)",
+   why:"Compact round table with 4 chairs. Fits a small dining area.", url:"https://www.lazada.com.ph/trending/Dining-Room-Sets-Top-Deals-This-Month/1639529529"},
+  {cat:"dining", tier:"t20", name:"IKEA VIHALS Table + 6 Chairs", price:17793, store:"IKEA PH",
+   why:"Minimalist white extendable table with stackable chairs. A full 6-seat set under ₱20k.", url:"https://www.ikea.com/ph/en/p/vihals-vihals-table-and-6-chairs-s09599546"},
+  {cat:"dining", tier:"t20", name:"Our Home Fenton 6-Seater Dining Table", price:17950, store:"Our Home (SM)",
+   why:"The entry point of Our Home's 6-seater line.", url:"https://ourhome.ph/pages/6-seater-dining-table-dimensions-guide"},
+  {cat:"dining", tier:"t20", name:"Our Home Hendrix Extendable Dining Table", price:27950, store:"Our Home (SM)",
+   why:"Seats 6 every day and extends for Noche Buena or family visits.", url:"https://ourhome.ph/pages/6-seater-dining-table-dimensions-guide"},
+  {cat:"dining", tier:"t30", name:"Our Home Sesli 6-Seater Dining Table", price:29950, store:"Our Home (SM)",
+   why:"A sturdier mid-range 6-seater.", url:"https://ourhome.ph/pages/6-seater-dining-table-dimensions-guide"},
+  {cat:"dining", tier:"t30", name:"Our Home Geline II 6-Seater Dining Table", price:44950, store:"Our Home (SM)",
+   why:"Premium centerpiece table that should last for decades.", url:"https://ourhome.ph/pages/6-seater-dining-table-dimensions-guide"},
+
+  // ---- Kitchen ----
+  {cat:"kitchen", tier:"t5", name:"Masflex 7-Piece Knife Block Set", price:1600, store:"Lazada (Masflex)",
+   why:"Filipino brand. A full set of knives for a new kitchen.", url:"https://brandwiki.lazada.com.ph/masflex/"},
+  {cat:"kitchen", tier:"t5", name:"IKEA 365+ Cookware Set of 6 (Stainless)", price:1999, store:"IKEA PH",
+   why:"Heavy, durable everyday pots at a low price.", url:"https://www.ikea.com/ph/en/p/ikea-365-cookware-set-of-6-stainless-steel-60484330/"},
+  {cat:"kitchen", tier:"t5", name:"IKEA HEMKOMST 7-Piece Cookware Set", price:4999, store:"IKEA PH",
+   why:"Step-up stainless set with lids.", url:"https://www.ikea.com/ph/en/p/hemkomst-7-piece-cookware-set-stainless-steel-50580105"},
+  {cat:"kitchen", tier:"t10", name:"Lodge Enamel Dutch Oven", price:7995, store:"Rustan's",
+   why:"For sinigang, caldereta, and bread. PFAS-free enamel cast iron.", url:"https://rustans.com/products/lodge-dutch-oven-enamel"},
+  {cat:"kitchen", tier:"t10", name:"Tefal So Chef Cookware Set of 6", price:10169, store:"Rustan's",
+   why:"Non-stick pots and pans from a well-known brand. Covers daily cooking.", url:"https://rustans.com/products/tefal-so-chef-cookware-set-of-6"},
+  {cat:"kitchen", tier:"t20", name:"Tefal Ingenio G6 6-Piece Set", price:17149, store:"Rustan's",
+   why:"Detachable handles let the pans stack, go in the oven, and go in the fridge. Saves cabinet space.", url:"https://rustans.com/products/tefal-ingenio-g6-6-pcs-set-black"},
+  {cat:"kitchen", tier:"t30", name:"KitchenAid 6QT Artisan Stand Mixer", price:54995, store:"Rustan's",
+   why:"The classic wedding gift. Lasts for decades. Great as a group gift.", url:"https://rustans.com/collections/kitchenaid"}
+];
+/* -------------------------------- */
+
+const peso = n => "₱" + n.toLocaleString("en-PH");
+let tierSel = "all", catSel = "all";
+
+document.getElementById("delivery").innerHTML = DELIVERY_NOTE;
+
+function chips(el, opts, getSel, setSel){
+  el.innerHTML = "";
+  Object.entries(opts).forEach(([k,label])=>{
+    const b = document.createElement("button");
+    b.className="chip"; b.textContent=label;
+    b.setAttribute("aria-pressed", String(getSel()===k));
+    b.onclick=()=>{ setSel(k); render(); };
+    el.appendChild(b);
+  });
+}
+
+function render(){
+  chips(document.getElementById("tierFilters"), {all:"All budgets", ...TIERS}, ()=>tierSel, v=>tierSel=v);
+  const catOpts = {all:"All items"}; Object.entries(CATEGORIES).forEach(([k,c])=>catOpts[k]=c.name);
+  chips(document.getElementById("catFilters"), catOpts, ()=>catSel, v=>catSel=v);
+
+  const list = document.getElementById("list"); list.innerHTML="";
+  let shown = 0;
+  Object.entries(CATEGORIES).forEach(([k,c])=>{
+    if(catSel!=="all" && catSel!==k) return;
+    const items = ITEMS.filter(i=>i.cat===k && (tierSel==="all"||i.tier===tierSel)).sort((a,b)=>a.price-b.price);
+    if(!items.length) return;
+    shown += items.length;
+    const s = document.createElement("section"); s.className="cat";
+    s.innerHTML = `<h2>${c.name}</h2><p class="note">${c.note}</p><div class="grid"></div>`;
+    const g = s.querySelector(".grid");
+    items.forEach(i=>{
+      const d=document.createElement("div"); d.className="card";
+      d.innerHTML = `<span class="tier ${i.tier}">${TIERS[i.tier]}</span>
+        <h3>${i.name}</h3>
+        <div class="price">${peso(i.price)}</div>
+        <div class="store">${i.store}</div>
+        <div class="why">${i.why}</div>
+        <a class="btn" href="${i.url}" target="_blank" rel="noopener">View at store →</a>`;
+      g.appendChild(d);
+    });
+    list.appendChild(s);
+  });
+  if(!shown) list.innerHTML = `<p class="empty">Nothing in this combination. Try another budget.</p>`;
+}
+render();
+</script>
+</body>
+</html>
