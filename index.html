@@ -124,7 +124,7 @@ const TIERS = {
 const CATEGORIES = {
   bed:     {name:"Bed",          note:"Queen size (60 × 75 in). The frame and the mattress are listed separately, so they can be two gifts."},
   tv:      {name:"TV",           note:"55 inches fits most living rooms. Bigger screens are listed in the top tier."},
-  sofa:    {name:"Sofa",         note:"A 2–3 seater or a small sectional for the living room."},
+  sofa:    {name:"Sofa & Bean Bags", note:"A 2–3 seater or a small sectional for the living room, plus MUJI bean bags for lounging."},
   dining:  {name:"Dining Table", note:"A 4-seater works for everyday use. A 6-seater leaves room for family."},
   kitchen: {name:"Kitchenware",  note:"Cookware and appliances for our first kitchen."}
 };
@@ -139,6 +139,8 @@ const ITEMS = [
    why:"Upholstered headboard in beige or light taupe. Looks warmer than a metal frame.", url:"https://mandauefoam.ph/collections/queen-beds"},
   {cat:"bed", tier:"t20", name:"Uratex Senso Memory Original Mattress", price:17500, store:"Uratex",
    why:"Plush memory foam that relieves pressure points. Comes with a 10-year warranty.", url:"https://uratex.com.ph/products/sensory-memory-original"},
+  {cat:"bed", tier:"t20", name:"Emma Original Hybrid Mattress", price:18050, store:"Emma Sleep PH",
+   why:"Medium-firm 25 cm hybrid with five layers and a 10-year warranty. Price shown is the starting size, so check the queen price.", url:"https://www.emma-sleep.com.ph/collections/mattresses"},
   {cat:"bed", tier:"t20", name:"IKEA HEMNES Bed Frame + Mattress (150 × 200 cm)", price:24998, store:"IKEA PH",
    why:"Solid-wood frame bundled with a firm memory-foam mattress. One gift covers the whole bed.", url:"https://www.ikea.com/ph/en/p/hemnes-bed-frame-with-mattress-s19541965"},
   {cat:"bed", tier:"t30", name:"Our Home Gatwick Bed Frame (Queen)", price:29950, store:"Our Home (SM)",
@@ -157,6 +159,10 @@ const ITEMS = [
    why:"Mini-LED gives it much higher brightness and contrast. It also has 144Hz and Onkyo speakers. The best value in this tier.", url:"https://netcodex.ph/product/tcl-c6k-55-inch-qd-mini-led-4k-hdr-smart-tv-hva-panel-144hz-dolby-atmos-with-google-tv-and-onkyo-2-1-hi-fi-audio-55c6k/"},
   {cat:"tv", tier:"t30", name:"Xiaomi TV S Mini LED 2026 — 65\"", price:51990, store:"Xiaomi PH / Shopee / Lazada",
    why:"A big 65\" Mini-LED screen for movie nights. A good group gift.", url:"https://www.noypigeeks.com/?p=280343"},
+  {cat:"tv", tier:"t30", name:"Hisense 55U7Q 55\" Mini-LED Pro Google TV", price:42399, store:"Ansons",
+   why:"Brighter Mini-LED panel with 144Hz gaming. The U7 line is a regular reviewers' value pick.", url:"https://ansons.ph/product/hisense-55u7q-55in-4k-uhd-miniled-pro-google-tv/"},
+  {cat:"tv", tier:"t30", name:"LG OLED B6 55\" (2026)", price:56990, store:"Ansons",
+   why:"The most affordable way into OLED: perfect blacks and 4K at up to 144Hz. A good group gift.", url:"https://ansons.ph/product-category/television/lg"},
   {cat:"tv", tier:"t30", name:"LG OLED evo C6 55\" (2026)", price:82490, store:"Ansons",
    why:"The premium pick, with perfect blacks and a 2-year warranty. Best as a group gift.", url:"https://ansons.ph/product/2026-model-55in-lg-oled-evo-ai-4k-smart-tv-oled55c6psa/"},
 
@@ -173,6 +179,12 @@ const ITEMS = [
    why:"L-shaped sectional. Room to lie down and watch TV.", url:"https://ourhome.ph/collections/sofas"},
   {cat:"sofa", tier:"t30", name:"Mandaue Foam Wisteria Sofa Set", price:33650, store:"Mandaue Foam",
    why:"Full wooden-frame living room set made from FSC-certified wood, with a 30-day return guarantee.", url:"https://mandauefoam.ph/collections/wooden-sofa-sets"},
+  {cat:"sofa", tier:"t5", name:"MUJI Beads Sofa Cover", price:3500, store:"MUJI Philippines",
+   why:"Washable cover for the MUJI bean bag. The bean bag body is a separate gift. Sometimes on sale for much less.", url:"https://www.mujiph.com/product-page/beads-sofa-cover-3"},
+  {cat:"sofa", tier:"t10", name:"MUJI Beads Sofa (Body)", price:7990, store:"MUJI Philippines",
+   why:"The MUJI bean bag we'd love: fine beads that mould to your body (65 × 65 × 43 cm). Cover sold separately. We'd happily take two!", url:"https://www.mujiph.com/product-page/beads-sofa-body"},
+  {cat:"sofa", tier:"t10", name:"MUJI Beads Sofa Highback (Body)", price:7990, store:"MUJI Philippines",
+   why:"High-back version of the MUJI bean bag with more neck support. Cover sold separately.", url:"https://www.mujiph.com/product-page/sofa-beads-highback"},
 
   // ---- Dining ----
   {cat:"dining", tier:"t10", name:"Mandaue Foam Elsie 4-Seater Round Dining Set", price:9737, store:"Lazada (Mandaue Foam)",
