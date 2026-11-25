@@ -9,7 +9,7 @@ A single-page wedding registry (`index.html`). It lists the items for our first 
 | ~₱20k | ₱15k – ₱30k |
 | ₱30k & up | big-ticket and group gifts |
 
-Categories: Bed (frame and mattress listed separately), TV, Sofa & MUJI bean bags, Dining Table, Kitchenware.
+Categories: Bed (frame and mattress listed separately), TV, Sofa & MUJI bean bags, Dining Table, Kitchenware, Refrigerator, Aircon (split type).
 
 ## Editing
 

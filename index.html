@@ -126,7 +126,9 @@ const CATEGORIES = {
   tv:      {name:"TV",           note:"55 inches fits most living rooms. Bigger screens are listed in the top tier."},
   sofa:    {name:"Sofa & Bean Bags", note:"A 2–3 seater or a small sectional for the living room, plus MUJI bean bags for lounging."},
   dining:  {name:"Dining Table", note:"A 4-seater works for everyday use. A 6-seater leaves room for family."},
-  kitchen: {name:"Kitchenware",  note:"Cookware and appliances for our first kitchen."}
+  kitchen: {name:"Kitchenware",  note:"Cookware and appliances for our first kitchen."},
+  ref:     {name:"Refrigerator", note:"A no-frost inverter model. Around 9–11 cu.ft. is enough for the two of us."},
+  aircon:  {name:"Aircon",       note:"Split-type inverter. 1HP cools a bedroom, 1.5HP a larger room. Installation is usually a separate fee."}
 };
 
 const ITEMS = [
@@ -216,7 +218,37 @@ const ITEMS = [
   {cat:"kitchen", tier:"t20", name:"Tefal Ingenio G6 6-Piece Set", price:17149, store:"Rustan's",
    why:"Detachable handles let the pans stack, go in the oven, and go in the fridge. Saves cabinet space.", url:"https://rustans.com/products/tefal-ingenio-g6-6-pcs-set-black"},
   {cat:"kitchen", tier:"t30", name:"KitchenAid 6QT Artisan Stand Mixer", price:54995, store:"Rustan's",
-   why:"The classic wedding gift. Lasts for decades. Great as a group gift.", url:"https://rustans.com/collections/kitchenaid"}
+   why:"The classic wedding gift. Lasts for decades. Great as a group gift.", url:"https://rustans.com/collections/kitchenaid"},
+
+  // ---- Refrigerator ----
+  {cat:"ref", tier:"t20", name:"Samsung RT20FARVDSA 7.4 cu.ft. Two-Door Inverter Refrigerator", price:17995, store:"Abenson",
+   why:"Compact no-frost inverter fridge from a big brand. The most affordable good option.", url:"https://www.abenson.com/home-appliances/refrigerator/category/inverter-refrigerators-2/refrigerator-type/two-door.html"},
+  {cat:"ref", tier:"t20", name:"Panasonic NR-BP272VD 9.5 cu.ft. Two-Door Inverter Refrigerator", price:18995, store:"Ansons",
+   why:"No-frost inverter with Econavi sensors, and more room for the price. Our value pick.", url:"https://ansons.ph/product/panasonic-nr-bp272vd-9-5-cu-ft-two-door-refrigerator/"},
+  {cat:"ref", tier:"t20", name:"LG RVT-B093BS 9.3 cu.ft. Two-Door Inverter Refrigerator", price:23995, store:"Abenson",
+   why:"No-frost top-freezer fridge with LG's inverter compressor.", url:"https://www.abenson.com/home-appliances/refrigerator/category/inverter-refrigerators-2/refrigerator-type/two-door.html"},
+  {cat:"ref", tier:"t20", name:"Sharp SJ-FTS13BVS-DS 12.7 cu.ft. Two-Door Inverter Refrigerator", price:27998, store:"Abenson",
+   why:"The roomiest pick under ₱30k, with Sharp's J-Tech inverter.", url:"https://www.abenson.com/home-appliances/refrigerator/inverter-refrigerators/refrigerator-type/two-door.html"},
+  {cat:"ref", tier:"t30", name:"Panasonic NR-BV360GKPH 11.3 cu.ft. Bottom-Freezer Inverter Refrigerator", price:30998, store:"Abenson",
+   why:"Freezer at the bottom, so fresh food sits at eye level. No-frost inverter.", url:"https://www.abenson.com/home-appliances/refrigerator/product-brand/panasonic-samsung.html"},
+  {cat:"ref", tier:"t30", name:"Samsung RT42CG6442B1TC 14.7 cu.ft. Two-Door Inverter Refrigerator", price:37998, store:"Abenson",
+   why:"Large family-size fridge with a digital inverter. Room to grow into.", url:"https://www.abenson.com/home-appliances/refrigerator/inverter-refrigerators/refrigerator-inverter-technology/inverter.html"},
+  {cat:"ref", tier:"t30", name:"LG RVS-B200LS 20 cu.ft. Side-by-Side Inverter Refrigerator", price:39998, store:"Abenson",
+   why:"Full side-by-side at an unusually low price. A good group gift.", url:"https://home.abenson.com/home-appliances/refrigerator/category/side-by-side-refrigerators.html"},
+
+  // ---- Aircon (split type) ----
+  {cat:"aircon", tier:"t20", name:"Mabe ASCM09BXR 1HP Premium Inverter Split-Type Aircon", price:17995, store:"Distributors Appliance Sale",
+   why:"The lowest-priced inverter split we found. Enough for a bedroom.", url:"https://www.distributorsappliancesale.com/collections/split-type-air-conditioner"},
+  {cat:"aircon", tier:"t20", name:"Fabriano FSE12TWI 1.5HP Inverter Split-Type Aircon", price:26995, store:"Fabriano",
+   why:"1.5HP inverter split under ₱30k for a larger room.", url:"https://fabriano.ph/collections/split-type"},
+  {cat:"aircon", tier:"t30", name:"TCL TAC10CSD/KEI2 1HP Inverter Split-Type Aircon", price:30445, store:"Robinsons Appliances",
+   why:"1HP inverter split for a bedroom, from a mainstream brand.", url:"https://robinsonsappliances.com.ph/collections/split-type-airconditioner"},
+  {cat:"aircon", tier:"t30", name:"TCL TAC13CSD/KEI2 1.5HP Full DC Inverter Split-Type Aircon", price:32645, store:"Robinsons Appliances",
+   why:"1.5HP full DC inverter for only a little more than the 1HP.", url:"https://robinsonsappliances.com.ph/collections/split-type-airconditioner"},
+  {cat:"aircon", tier:"t30", name:"Samsung WindFree AR13BYHAMWKNTC 1.5HP Inverter Split-Type Aircon", price:34245, store:"Robinsons Appliances",
+   why:"WindFree mode cools without a direct blast of cold air. Our top pick.", url:"https://robinsonsappliances.com.ph/collections/split-type-airconditioner"},
+  {cat:"aircon", tier:"t30", name:"Daikin D-Smart Queen 1HP Inverter Split-Type Aircon", price:42655, store:"Daikin dealers",
+   why:"The premium choice, from a brand with a wide service network. A good group gift.", url:"https://aircon.ph/guides/complete-aircon-buying-guide-philippines/"}
 ];
 /* -------------------------------- */
 
