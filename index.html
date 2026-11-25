@@ -41,6 +41,26 @@
   .why{font-size:13.5px;color:#4a423c;flex:1}
   .card a.btn{align-self:flex-start;text-decoration:none;font-weight:600;font-size:13px;color:var(--accent);border-bottom:1px solid currentColor;padding-bottom:1px}
   .empty{color:var(--muted);text-align:center;padding:40px}
+  .actions{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .claim{border:0;background:var(--ink);color:#fff;border-radius:999px;padding:9px 15px;font:600 13px Inter,sans-serif;cursor:pointer;min-height:38px}
+  .claim:hover{background:var(--accent)}
+  .claim:focus-visible,.chip:focus-visible,.modal button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .card.taken{opacity:.55}
+  .card.taken h3{text-decoration:line-through}
+  .badge{font-size:12.5px;font-weight:600;color:var(--t5)}
+  .badge.chips{color:var(--t30)}
+  .backdrop{position:fixed;inset:0;background:rgba(43,38,34,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+  .backdrop.open{display:flex}
+  .modal{background:#fff;border-radius:16px;max-width:420px;width:100%;padding:22px;box-shadow:0 20px 50px rgba(0,0,0,.2)}
+  .modal h4{font-family:"Cormorant Garamond",serif;font-size:26px;margin:0 0 4px;line-height:1.1}
+  .modal p{margin:0 0 14px;color:var(--muted);font-size:14px}
+  .modal label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
+  .modal input,.modal textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:16px Inter,sans-serif;background:#fffdfa}
+  .modal textarea{min-height:70px;resize:vertical}
+  .modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+  .modal .ghost{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:9px 15px;font:600 13px Inter,sans-serif;cursor:pointer}
+  .modal .msg{font-size:13.5px;margin-top:10px;min-height:1em}
+  .modal .msg.err{color:#a23b3b}
   footer{max-width:760px;margin:0 auto;padding:10px 20px 60px;text-align:center;color:var(--muted);font-size:13px}
 </style>
 </head>
@@ -63,13 +83,35 @@
 
 <main id="list"></main>
 
+<div class="backdrop" id="backdrop" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <form class="modal" id="claimForm">
+    <h4 id="mTitle">Give this gift</h4>
+    <p id="mSub"></p>
+    <label for="fName">Your name</label>
+    <input id="fName" required maxlength="100" autocomplete="name">
+    <label for="fContact">Mobile or email <span style="font-weight:400;color:var(--muted)">(optional, so we can thank you)</span></label>
+    <input id="fContact" maxlength="100" autocomplete="email">
+    <label for="fNote">Note <span style="font-weight:400;color:var(--muted)">(optional)</span></label>
+    <textarea id="fNote" maxlength="300"></textarea>
+    <div class="msg" id="mMsg"></div>
+    <div class="row">
+      <button type="button" class="ghost" id="mCancel">Cancel</button>
+      <button type="submit" class="claim" id="mSubmit">Confirm</button>
+    </div>
+  </form>
+</div>
+
 <footer>
   Prices were checked in November 2026 from each store's site and may change with sales.
-  Please let Chris or Yumi know what you're giving so two people don't buy the same thing.
+  Tap “I'll give this” so two people don't buy the same thing. Items in the ₱30k &amp; up tier can be shared: tap “Chip in” to join a group gift.
+  Changed your mind? Just message Chris or Yumi.
 </footer>
 
 <script>
 /* ---------- Edit these ---------- */
+// Paste the Google Apps Script web app URL here (see README). Leave empty to hide the claim buttons.
+const CLAIMS_URL = "";
+
 const DELIVERY_NOTE = "<b>Delivery:</b> please have gifts delivered to our home in Manila. Message Chris or Yumi for the full address and the best delivery days.";
 
 const TIERS = {
@@ -165,7 +207,74 @@ const ITEMS = [
 /* -------------------------------- */
 
 const peso = n => "₱" + n.toLocaleString("en-PH");
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+ITEMS.forEach(i => { i.id = i.id || slug(i.name); });
 let tierSel = "all", catSel = "all";
+let claims = {};            // { itemId: {taken:bool, chips:number} }
+let current = null;         // item being claimed
+
+async function loadClaims(){
+  if(!CLAIMS_URL) return;
+  try{
+    const r = await fetch(CLAIMS_URL + "?t=" + Date.now());
+    const data = await r.json();
+    claims = (data && typeof data === "object") ? data : {};
+    render();
+  }catch(e){ /* page still works without claim status */ }
+}
+
+const backdrop = document.getElementById("backdrop");
+const form = document.getElementById("claimForm");
+const msg = document.getElementById("mMsg");
+const submitBtn = document.getElementById("mSubmit");
+
+function openClaim(item){
+  current = item;
+  const chip = item.tier === "t30";
+  document.getElementById("mTitle").textContent = chip ? "Chip in for this gift" : "Give this gift";
+  document.getElementById("mSub").textContent = item.name + " · " + peso(item.price) +
+    (chip ? ". Others can chip in too, and we'll put the group in touch." : ". We'll mark it as taken so no one else buys it.");
+  msg.textContent = ""; msg.className = "msg";
+  submitBtn.disabled = false; submitBtn.textContent = "Confirm";
+  form.reset();
+  backdrop.classList.add("open");
+  setTimeout(()=>document.getElementById("fName").focus(), 30);
+}
+function closeClaim(){ backdrop.classList.remove("open"); current = null; }
+document.getElementById("mCancel").onclick = closeClaim;
+backdrop.addEventListener("click", e => { if(e.target === backdrop) closeClaim(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape" && current) closeClaim(); });
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  if(!current) return;
+  const name = document.getElementById("fName").value.trim();
+  if(!name){ msg.textContent = "Please enter your name."; msg.className = "msg err"; return; }
+  submitBtn.disabled = true; submitBtn.textContent = "Saving…";
+  const payload = {
+    id: current.id, item: current.name, name,
+    contact: document.getElementById("fContact").value.trim(),
+    note: document.getElementById("fNote").value.trim(),
+    type: current.tier === "t30" ? "chip" : "claim"
+  };
+  try{
+    const r = await fetch(CLAIMS_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(payload)});
+    const res = await r.json();
+    if(res.ok){
+      msg.textContent = "Thank you, " + name + "! 💛"; msg.className = "msg";
+      submitBtn.textContent = "Done";
+      await loadClaims();
+      setTimeout(closeClaim, 1400);
+    }else{
+      msg.textContent = res.error === "taken" ? "Someone just took this one. Please pick another!" : "Something went wrong. Please try again.";
+      msg.className = "msg err"; submitBtn.disabled = false; submitBtn.textContent = "Confirm";
+      loadClaims();
+    }
+  }catch(err){
+    msg.textContent = "Couldn't save. Check your connection and try again.";
+    msg.className = "msg err"; submitBtn.disabled = false; submitBtn.textContent = "Confirm";
+  }
+});
 
 document.getElementById("delivery").innerHTML = DELIVERY_NOTE;
 
@@ -196,13 +305,25 @@ function render(){
     s.innerHTML = `<h2>${c.name}</h2><p class="note">${c.note}</p><div class="grid"></div>`;
     const g = s.querySelector(".grid");
     items.forEach(i=>{
-      const d=document.createElement("div"); d.className="card";
+      const c = claims[i.id] || {};
+      const isChip = i.tier === "t30";
+      const taken = !isChip && c.taken;
+      const chips = Number(c.chips) || 0;
+      const d=document.createElement("div"); d.className="card" + (taken ? " taken" : "");
+      let action = "";
+      if(CLAIMS_URL){
+        if(taken) action = `<span class="badge">✓ Already taken</span>`;
+        else action = `<button class="claim" type="button">${isChip ? "Chip in" : "I'll give this"}</button>` +
+          (isChip && chips ? `<span class="badge chips">${chips} chipping in</span>` : "");
+      }
       d.innerHTML = `<span class="tier ${i.tier}">${TIERS[i.tier]}</span>
         <h3>${i.name}</h3>
         <div class="price">${peso(i.price)}</div>
         <div class="store">${i.store}</div>
         <div class="why">${i.why}</div>
-        <a class="btn" href="${i.url}" target="_blank" rel="noopener">View at store →</a>`;
+        <a class="btn" href="${i.url}" target="_blank" rel="noopener">View at store →</a>
+        ${action ? `<div class="actions">${action}</div>` : ""}`;
+      const b = d.querySelector(".claim"); if(b) b.onclick = () => openClaim(i);
       g.appendChild(d);
     });
     list.appendChild(s);
@@ -210,6 +331,8 @@ function render(){
   if(!shown) list.innerHTML = `<p class="empty">Nothing in this combination. Try another budget.</p>`;
 }
 render();
+loadClaims();
+setInterval(loadClaims, 60000);
 </script>
 </body>
 </html>
