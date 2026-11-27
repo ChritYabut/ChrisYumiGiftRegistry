@@ -131,7 +131,7 @@ const CATEGORIES = {
   dining:  {name:"Dining Table", note:"A 4-seater works for everyday use. A 6-seater leaves room for family."},
   kitchen: {name:"Kitchenware",  note:"Cookware and appliances for our first kitchen."},
   ref:     {name:"Refrigerator", note:"A no-frost inverter model. Around 9–11 cu.ft. is enough for the two of us."},
-  aircon:  {name:"Aircon",       note:"Split-type inverter. 1HP cools a bedroom, 1.5HP a larger room. Installation is usually a separate fee."}
+  aircon:  {name:"Aircon",       note:"Split-type inverter. 1HP cools a bedroom, 1.5HP a larger room. Installation is usually a separate fee. We can use two."}
 };
 
 const ITEMS = [
@@ -320,12 +320,16 @@ function groupsOf(i){
   return g;
 }
 ITEMS.forEach(i => { i.groups = groupsOf(i); i.img = i.img || IMAGES[i.id] || ""; });
+// How many different items of a kind we can receive. Anything not listed here is 1.
+const GROUP_LIMIT = {aircon:2};
+const GROUP_PLURAL = {aircon:"aircons"};
 // Returns the label of the group that locks this item, or "" if it is still open.
 function lockedBy(item){
   for(const g of item.groups){
-    const other = ITEMS.find(o => o !== item && o.groups.includes(g) &&
-      ((claims[o.id]||{}).taken || Number((claims[o.id]||{}).chips) > 0));
-    if(other) return GROUP_LABEL[g];
+    const limit = GROUP_LIMIT[g] || 1;
+    const others = ITEMS.filter(o => o !== item && o.groups.includes(g) &&
+      ((claims[o.id]||{}).taken || Number((claims[o.id]||{}).chips) > 0)).length;
+    if(others >= limit) return limit > 1 ? (GROUP_PLURAL[g] || GROUP_LABEL[g] + "s") : GROUP_LABEL[g];
   }
   return "";
 }
@@ -441,7 +445,7 @@ function render(){
       let action = "";
       if(CLAIMS_URL){
         if(taken) action = `<span class="badge">✓ Already taken</span>`;
-        else if(lock) action = `<span class="badge lock">Our ${lock} is already covered</span>`;
+        else if(lock) action = `<span class="badge lock">Our ${lock} ${/s$/.test(lock) ? "are" : "is"} already covered</span>`;
         else action = `<button class="claim" type="button">${isChip ? "Chip in" : "I'll give this"}</button>` +
           (isChip && chips ? `<span class="badge chips">${chips} chipping in</span>` : "");
       }
