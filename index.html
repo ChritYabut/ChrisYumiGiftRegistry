@@ -188,8 +188,8 @@ const ITEMS = [
    why:"L-shaped sectional. Room to lie down and watch TV.", url:"https://ourhome.ph/collections/sofas"},
   {cat:"sofa", tier:"t30", name:"Mandaue Foam Wisteria Sofa Set", price:33650, store:"Mandaue Foam",
    why:"Full wooden-frame living room set made from FSC-certified wood, with a 30-day return guarantee.", url:"https://mandauefoam.ph/collections/wooden-sofa-sets"},
-  {cat:"sofa", tier:"t5", name:"MUJI Beads Sofa Cover", price:3500, store:"MUJI Philippines",
-   why:"Washable cover for the MUJI bean bag. The bean bag body is a separate gift. Sometimes on sale for much less.", url:"https://www.mujiph.com/"},
+  {cat:"sofa", tier:"t5", name:"MUJI Beads Sofa Plain Weave Polyester Cover", price:2490, store:"MUJI Philippines",
+   why:"Easy-care cover for the regular MUJI bean bag, in Grey Beige. The bean bag body is a separate gift.", url:"https://www.mujiph.com/product-page/beads-sofa-plain-weave-polyester-cover", img:"images/muji-cover.jpg"},
   {cat:"sofa", tier:"t10", name:"MUJI Beads Sofa (Body)", price:5490, store:"MUJI Philippines",
    why:"The MUJI bean bag we'd love: fine beads that mould to your body (65 × 65 × 43 cm). Cover sold separately. We'd happily take two!", url:"https://www.mujiph.com/product-page/beads-sofa-body"},
   {cat:"sofa", tier:"t10", name:"MUJI Sofa Beads Highback", price:8990, store:"MUJI Philippines",
@@ -213,17 +213,15 @@ const ITEMS = [
 
   // ---- Kitchen ----
   {cat:"kitchen", tier:"t5", name:"Masflex 7-Piece Knife Block Set", price:1600, store:"Lazada (Masflex)",
-   why:"Filipino brand. A full set of knives for a new kitchen.", url:"https://brandwiki.lazada.com.ph/masflex/"},
+   why:"Filipino brand. A full set of knives for a new kitchen.", url:"https://brandwiki.lazada.com.ph/masflex/", img:"images/masflex-knife.jpg"},
   {cat:"kitchen", tier:"t5", name:"IKEA 365+ Cookware Set of 6 (Stainless)", price:1999, store:"IKEA PH",
    why:"Heavy, durable everyday pots at a low price.", url:"https://www.ikea.com/ph/en/p/ikea-365-cookware-set-of-6-stainless-steel-60484330/"},
   {cat:"kitchen", tier:"t5", name:"IKEA HEMKOMST 7-Piece Cookware Set", price:4999, store:"IKEA PH",
    why:"Step-up stainless set with lids.", url:"https://www.ikea.com/ph/en/p/hemkomst-7-piece-cookware-set-stainless-steel-50580105"},
   {cat:"kitchen", tier:"t10", name:"Lodge Enamel Dutch Oven", price:7995, store:"Rustan's",
    why:"For sinigang, caldereta, and bread. PFAS-free enamel cast iron.", url:"https://rustans.com/products/lodge-dutch-oven-enamel"},
-  {cat:"kitchen", tier:"t10", name:"Tefal So Chef Cookware Set of 6", price:10169, store:"Rustan's",
-   why:"Non-stick pots and pans from a well-known brand. Covers daily cooking.", url:"https://rustans.com/products/tefal-so-chef-cookware-set-of-6"},
-  {cat:"kitchen", tier:"t20", name:"Tefal Ingenio G6 6-Piece Set", price:17149, store:"Rustan's",
-   why:"Detachable handles let the pans stack, go in the oven, and go in the fridge. Saves cabinet space.", url:"https://rustans.com/products/tefal-ingenio-g6-6-pcs-set-black"},
+  {cat:"kitchen", tier:"t5", name:"Tefal Cook & Shine 6-Piece Set (Rose)", price:4000, store:"Rustan's",
+   why:"Non-stick saucepan with lid, frying pan and wok pan, plus a spatula and ladle, in rose gold. On sale from ₱9,999.", url:"https://rustans.com/products/tefal-cook-shine-set-6-pieces-with-lid-spatula-ladle-rose-1", img:"images/tefal-cook-shine.jpg"},
   {cat:"kitchen", tier:"t30", name:"KitchenAid 6QT Artisan Stand Mixer", price:54995, store:"Rustan's",
    why:"The classic wedding gift. Lasts for decades. Great as a group gift.", url:"https://rustans.com/collections/kitchenaid"},
 
@@ -244,8 +242,6 @@ const ITEMS = [
    why:"Full side-by-side at an unusually low price. A good group gift.", url:"https://home.abenson.com/home-appliances/refrigerator/category/side-by-side-refrigerators.html"},
 
   // ---- Aircon (split type) ----
-  {cat:"aircon", tier:"t20", name:"Midea FP-53AST010KEIV-F4 1HP Inverter Split-Type Aircon", price:24498, store:"Abenson",
-   why:"The most affordable name-brand inverter split we found. Enough for a bedroom.", url:"https://home.abenson.com/aircon/split-type/product-brand/midea.html"},
   {cat:"aircon", tier:"t20", name:"Midea Chione MSCH-10CRFN8 1HP Full DC Inverter Split-Type Aircon", price:27998, store:"Abenson",
    why:"Full DC inverter with humidity control and fast cooling, for a bedroom.", url:"https://home.abenson.com/aircon/split-type/product-brand/midea.html"},
   {cat:"aircon", tier:"t20", name:"Midea Chione MSCH-13CRFN8 1.5HP Full DC Inverter Split-Type Aircon", price:29998, store:"Abenson",
@@ -333,7 +329,7 @@ function groupsOf(i){
   if(i.cat === "tv") g.push("tv");
   if(i.cat === "sofa" && !/MUJI/.test(n)) g.push("sofa");
   if(i.cat === "dining") g.push("dining");
-  if(i.cat === "kitchen" && /Cookware Set|Ingenio/.test(n)) g.push("cookware");
+  if(i.cat === "kitchen" && /Cookware Set|Cook & Shine/.test(n)) g.push("cookware");
   if(i.cat === "ref") g.push("ref");
   if(i.cat === "aircon") g.push("aircon");
   return g;
