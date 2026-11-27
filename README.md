@@ -42,3 +42,8 @@ Settings → Pages → Source: *Deploy from a branch* → `main` / root. The sit
 `https://chrityabut.github.io/ChrisYumiGiftRegistry/`.
 
 Prices were checked in November 2026 and change often with sales. Re-check them before sharing the link.
+
+## Locking and photos
+
+- **Similar items lock together.** Once one item of a kind is claimed (or someone starts chipping in on it), the other items of that kind close: bed frames, mattresses, TVs, sofas, dining sets, cookware sets, refrigerators, aircons. A bed frame and a mattress are separate kinds. MUJI bean bags and covers are never locked by other seating. The rules are in `groupsOf()` in `index.html`.
+- **Photos** are loaded straight from each store's website (the `IMAGES` map). If a store moves a photo, that card simply shows without one.

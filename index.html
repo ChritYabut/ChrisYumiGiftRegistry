@@ -45,6 +45,9 @@
   .claim{border:0;background:var(--ink);color:#fff;border-radius:999px;padding:9px 15px;font:600 13px Inter,sans-serif;cursor:pointer;min-height:38px}
   .claim:hover{background:var(--accent)}
   .claim:focus-visible,.chip:focus-visible,.modal button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .card .pic{display:block;width:calc(100% + 32px);margin:-16px -16px 4px;aspect-ratio:4/3;object-fit:contain;background:#fff;border-radius:14px 14px 0 0;border-bottom:1px solid var(--line);padding:10px}
+  .card.locked{opacity:.6}
+  .badge.lock{color:var(--muted)}
   .card.taken{opacity:.55}
   .card.taken h3{text-decoration:line-through}
   .badge{font-size:12.5px;font-weight:600;color:var(--t5)}
@@ -103,7 +106,7 @@
 
 <footer>
   Prices were checked in November 2026 from each store's site and may change with sales.
-  Tap “I'll give this” so two people don't buy the same thing. Items in the ₱30k &amp; up tier can be shared: tap “Chip in” to join a group gift.
+  Tap “I'll give this” so two people don't buy the same thing. Once one item of a kind is taken (one TV, one sofa), the similar ones close. Items in the ₱30k &amp; up tier can be shared: tap “Chip in” to join a group gift.
   Changed your mind? Just message Chris or Yumi.
 </footer>
 
@@ -182,13 +185,13 @@ const ITEMS = [
   {cat:"sofa", tier:"t30", name:"Mandaue Foam Wisteria Sofa Set", price:33650, store:"Mandaue Foam",
    why:"Full wooden-frame living room set made from FSC-certified wood, with a 30-day return guarantee.", url:"https://mandauefoam.ph/collections/wooden-sofa-sets"},
   {cat:"sofa", tier:"t5", name:"MUJI Beads Sofa Cover", price:3500, store:"MUJI Philippines",
-   why:"Washable cover for the MUJI bean bag. The bean bag body is a separate gift. Sometimes on sale for much less.", url:"https://www.mujiph.com/product-page/beads-sofa-cover-3"},
-  {cat:"sofa", tier:"t10", name:"MUJI Beads Sofa (Body)", price:7990, store:"MUJI Philippines",
+   why:"Washable cover for the MUJI bean bag. The bean bag body is a separate gift. Sometimes on sale for much less.", url:"https://www.mujiph.com/"},
+  {cat:"sofa", tier:"t10", name:"MUJI Beads Sofa (Body)", price:5490, store:"MUJI Philippines",
    why:"The MUJI bean bag we'd love: fine beads that mould to your body (65 × 65 × 43 cm). Cover sold separately. We'd happily take two!", url:"https://www.mujiph.com/product-page/beads-sofa-body"},
   {cat:"sofa", tier:"t10", name:"MUJI Sofa Beads Highback", price:8990, store:"MUJI Philippines",
    why:"Our favourite: the high-back MUJI bean bag with support up to the neck. Cover sold separately.", url:"https://www.mujiph.com/product-page/sofa-beads-highback"},
   {cat:"sofa", tier:"t5", name:"MUJI Sofa Beads Highback Cover", price:2990, store:"MUJI Philippines",
-   why:"The cover that goes with the high-back bean bag. Pairs with the body as a second gift.", url:"https://www.mujiph.com/"},
+   why:"The cover that goes with the high-back bean bag. Pairs with the body as a second gift.", url:"https://www.mujiph.com/product-page/sofa-beads-highback-cover"},
 
   // ---- Dining ----
   {cat:"dining", tier:"t10", name:"Mandaue Foam Elsie 4-Seater Round Dining Set", price:9737, store:"Lazada (Mandaue Foam)",
@@ -252,11 +255,80 @@ const ITEMS = [
   {cat:"aircon", tier:"t30", name:"Daikin D-Smart Queen FTKC25BVAF 1HP Inverter Split-Type Aircon", price:43991, store:"Abenson",
    why:"The premium choice, with built-in Wi-Fi. A good group gift.", url:"https://home.abenson.com/aircon/split-type/product-brand/daikin.html"}
 ];
+
+// Product photos, keyed by item id (the item name in lower-case with dashes). Loaded from each store's site.
+const IMAGES = {
+  "mandaue-foam-kumi-metal-bed-frame-queen": "https://cdn.shopify.com/s/files/1/0078/2555/5571/files/PHOTO1ANGLE_5119c63c-c596-4c3f-8262-87e049ee0489.jpg?width=500",
+  "our-home-gatwick-bed-frame-queen": "https://cdn.shopify.com/s/files/1/0290/6177/5439/products/Gatwick_10419731_55a8c918-4b37-4398-a99a-6544fe303b1f.jpg?width=500",
+  "uratex-premium-touch-sublime-mattress-queen-11": "https://cdn.shopify.com/s/files/1/0505/8897/5259/files/PremiumTouchSublimeIso.jpg?width=500",
+  "ikea-hemnes-bed-frame-mattress-150-200-cm": "https://www.ikea.com/global/assets/range-categorisation/images/beds-with-mattresses-included-700513.jpeg",
+  "hisense-55u7q-55-mini-led-pro-google-tv": "https://ansons.ph/wp-content/uploads/2025/10/08_55_85U7Q.png",
+  "lg-oled-evo-c6-55-2026": "https://ansons.ph/wp-content/uploads/2026/05/09_OLED55_65C6PSA.png",
+  "lg-oled-b6-55-2026": "https://ansons.ph/wp-content/uploads/2026/05/08_55_65B6PSA.png",
+  "our-home-seiv-2-seater-sofa": "https://cdn.shopify.com/s/files/1/0290/6177/5439/products/seiv-2-seater-sofa_10402171-_2_8d3f3b85-b8cd-4d35-bdc4-98344d1b4106.jpg?width=500",
+  "our-home-seiv-3-seater-sofa": "https://cdn.shopify.com/s/files/1/0290/6177/5439/products/Seiv3SeaterSofa_10402170_side_ee1dd866-6a8b-42ba-83e7-06b27967afe4.jpg?width=500",
+  "our-home-colsten-sofabed": "https://cdn.shopify.com/s/files/1/0290/6177/5439/products/COLSTENGRAYSOFABED_10425823_SUMMERGRAY_2_fc476df5-0fa3-4e2d-a92b-ed01310d8a46.jpg?width=500",
+  "our-home-carrucci-2-seater-sofa": "https://cdn.shopify.com/s/files/1/0290/6177/5439/products/Carrucci2SeaterSofa_10425313_3_f802118b-4271-40c1-9447-f1b26aee7f56.jpg?width=500",
+  "our-home-seiv-sectional-sofa": "https://cdn.shopify.com/s/files/1/0290/6177/5439/products/SpecialsSeivLshapeSofa_10425142_1_0d2ed547-5dbd-446b-a822-48f748cd0368.jpg?width=500",
+  "mandaue-foam-wisteria-sofa-set": "https://cdn.shopify.com/s/files/1/0078/2555/5571/files/mandaue-foam-wisteria-sofa-set-1151824131.png?width=500",
+  "muji-beads-sofa-body": "https://static.wixstatic.com/media/58ae67_b2259de53bfe420db869db72428138ad~mv2.jpg/v1/fit/w_500,h_500,q_90/file.jpg",
+  "muji-sofa-beads-highback-cover": "https://static.wixstatic.com/media/e57753_0bb31989f0254bdcb68ea807401cab0f~mv2.jpg/v1/fit/w_500,h_500,q_90/file.jpg",
+  "muji-sofa-beads-highback": "https://static.wixstatic.com/media/e57753_b0dfc5727d9b4ccc817d1b08024602c8~mv2.jpg/v1/fit/w_500,h_500,q_90/file.jpg",
+  "mandaue-foam-elsie-4-seater-round-dining-set": "https://cdn.shopify.com/s/files/1/0078/2555/5571/files/mandaue-foam-elsie-4-seater-round-dining-set-walnut-1151821303.png?width=500",
+  "ikea-vihals-table-6-chairs": "https://www.ikea.com/ph/en/images/products/vihals-vihals-table-and-6-chairs__1388773_pe964946_s5.jpg",
+  "our-home-fenton-6-seater-dining-table": "https://cdn.shopify.com/s/files/1/0290/6177/5439/files/FENTON_6S_DINING_TABLE.jpg?width=500",
+  "our-home-hendrix-extendable-dining-table": "https://cdn.shopify.com/s/files/1/0290/6177/5439/products/HendrixDiningTable_10424094_acdc0e30-e590-44ef-8767-1786cbd2460a.jpg?width=500",
+  "our-home-sesli-6-seater-dining-table": "https://cdn.shopify.com/s/files/1/0290/6177/5439/files/OURHOME10427404SESLI6SDININGTABLE_1.jpg?width=500",
+  "our-home-geline-ii-6-seater-dining-table": "https://cdn.shopify.com/s/files/1/0290/6177/5439/products/GelineII8SeaterDiningTable_10423302_2_9f0ef1ab-c720-4d1d-9ae5-b5b794856307.jpg?width=500",
+  "ikea-365-cookware-set-of-6-stainless": "https://www.ikea.com/ph/en/images/products/ikea-365-cookware-set-of-6-stainless-steel__1006151_pe825738_s5.jpg",
+  "ikea-hemkomst-7-piece-cookware-set": "https://www.ikea.com/ph/en/images/products/hemkomst-7-piece-cookware-set-stainless-steel__1257047_pe925726_s5.jpg",
+  "lodge-enamel-dutch-oven": "https://cdn.shopify.com/s/files/1/0032/3374/2946/files/3392287.jpg?width=500",
+  "kitchenaid-6qt-artisan-stand-mixer": "https://cdn.shopify.com/s/files/1/0032/3374/2946/files/6QTEmpireRedNEW.jpg?width=500",
+  "samsung-rt20farvdsa-7-4-cu-ft-two-door-inverter-refrigerator": "https://cdn.shopify.com/s/files/1/0754/5765/9017/files/21857_1.png?width=500",
+  "panasonic-nr-bp272vd-9-5-cu-ft-two-door-inverter-refrigerator": "https://cdn.shopify.com/s/files/1/0754/5765/9017/files/40567_1_87a08178-609c-4402-a48e-eb6c4500f6c5.jpg?width=500",
+  "lg-rvs-b200ls-20-cu-ft-side-by-side-inverter-refrigerator": "https://cdn.shopify.com/s/files/1/0754/5765/9017/files/41371.png?width=500",
+  "midea-chione-msch-10crfn8-1hp-full-dc-inverter-split-type-aircon": "https://cdn.shopify.com/s/files/1/0754/5765/9017/files/47978_2.png?width=500",
+  "midea-chione-msch-13crfn8-1-5hp-full-dc-inverter-split-type-aircon": "https://cdn.shopify.com/s/files/1/0754/5765/9017/files/47978_2.png?width=500",
+  "tcl-tac10csd-kei2-1hp-inverter-split-type-aircon": "https://cdn.shopify.com/s/files/1/0754/5765/9017/files/45305_1.png?width=500",
+  "tcl-tac13csd-kei2-1-5hp-full-dc-inverter-split-type-aircon": "https://cdn.shopify.com/s/files/1/0754/5765/9017/files/45307_1_ae51a986-ca2a-483f-b100-aaa035257aeb.png?width=500",
+  "samsung-windfree-ar13byhamwkntc-1-5hp-inverter-split-type-aircon": "https://cdn.shopify.com/s/files/1/0754/5765/9017/files/39404_1.png?width=500",
+  "daikin-d-smart-queen-ftkc25bvaf-1hp-inverter-split-type-aircon": "https://ansons.ph/wp-content/uploads/2026/04/04_FTKC_BVAF_Queen-Series.png"
+};
 /* -------------------------------- */
 
 const peso = n => "₱" + n.toLocaleString("en-PH");
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
 ITEMS.forEach(i => { i.id = i.id || slug(i.name); });
+
+/* Similar items lock together: once one is claimed (or someone starts chipping in), the others in the
+   same group close. MUJI bean bags and their covers are never locked by other seating, and a bed frame
+   and a mattress are separate groups, so we can receive one of each. */
+const GROUP_LABEL = {frame:"bed frame", mattress:"mattress", tv:"TV", sofa:"sofa", dining:"dining set",
+                     cookware:"cookware set", ref:"refrigerator", aircon:"aircon"};
+function groupsOf(i){
+  const n = i.name, g = [];
+  if(i.cat === "bed"){
+    if(/Bed Frame|Upholstered Bed/.test(n)) g.push("frame");
+    if(/Mattress/.test(n)) g.push("mattress");
+  }
+  if(i.cat === "tv") g.push("tv");
+  if(i.cat === "sofa" && !/MUJI/.test(n)) g.push("sofa");
+  if(i.cat === "dining") g.push("dining");
+  if(i.cat === "kitchen" && /Cookware Set|Ingenio/.test(n)) g.push("cookware");
+  if(i.cat === "ref") g.push("ref");
+  if(i.cat === "aircon") g.push("aircon");
+  return g;
+}
+ITEMS.forEach(i => { i.groups = groupsOf(i); i.img = i.img || IMAGES[i.id] || ""; });
+// Returns the label of the group that locks this item, or "" if it is still open.
+function lockedBy(item){
+  for(const g of item.groups){
+    const other = ITEMS.find(o => o !== item && o.groups.includes(g) &&
+      ((claims[o.id]||{}).taken || Number((claims[o.id]||{}).chips) > 0));
+    if(other) return GROUP_LABEL[g];
+  }
+  return "";
+}
 let tierSel = "all", catSel = "all";
 let claims = {};            // { itemId: {taken:bool, chips:number} }
 let current = null;         // item being claimed
@@ -299,6 +371,13 @@ form.addEventListener("submit", async e => {
   const name = document.getElementById("fName").value.trim();
   if(!name){ msg.textContent = "Please enter your name."; msg.className = "msg err"; return; }
   submitBtn.disabled = true; submitBtn.textContent = "Saving…";
+  await loadClaims();
+  if(!current) return;
+  const lk = lockedBy(current);
+  if(lk || (current.tier !== "t30" && (claims[current.id]||{}).taken)){
+    msg.textContent = lk ? "Someone just covered our " + lk + ". Please pick something else!" : "Someone just took this one. Please pick another!";
+    msg.className = "msg err"; submitBtn.textContent = "Confirm"; return;
+  }
   const payload = {
     id: current.id, item: current.name, name,
     contact: document.getElementById("fContact").value.trim(),
@@ -357,14 +436,16 @@ function render(){
       const isChip = i.tier === "t30";
       const taken = !isChip && c.taken;
       const chips = Number(c.chips) || 0;
-      const d=document.createElement("div"); d.className="card" + (taken ? " taken" : "");
+      const lock = taken ? "" : lockedBy(i);
+      const d=document.createElement("div"); d.className="card" + (taken ? " taken" : "") + (lock ? " locked" : "");
       let action = "";
       if(CLAIMS_URL){
         if(taken) action = `<span class="badge">✓ Already taken</span>`;
+        else if(lock) action = `<span class="badge lock">Our ${lock} is already covered</span>`;
         else action = `<button class="claim" type="button">${isChip ? "Chip in" : "I'll give this"}</button>` +
           (isChip && chips ? `<span class="badge chips">${chips} chipping in</span>` : "");
       }
-      d.innerHTML = `<span class="tier ${i.tier}">${TIERS[i.tier]}</span>
+      d.innerHTML = (i.img ? `<img class="pic" src="${i.img}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : "") + `<span class="tier ${i.tier}">${TIERS[i.tier]}</span>
         <h3>${i.name}</h3>
         <div class="price">${peso(i.price)}</div>
         <div class="store">${i.store}</div>
